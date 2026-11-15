@@ -1,6 +1,6 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { ArrowRight, ExternalLink } from 'lucide-react';
-import { Fragment, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import EventCard from '@/components/event-card';
 import NetworkStats, { type NetworkStatsData } from '@/components/network-stats';
 import SectionHeader from '@/components/section-header';
@@ -52,21 +52,7 @@ export default function Home({ upcomingEvents, networkStats }: HomeProps) {
                                     </Button>
                                 )}
                             </div>
-                            {vacc.firs.length > 0 && (
-                                <p className="text-sm text-muted-foreground">
-                                    Our airspace:{' '}
-                                    {vacc.firs.map((fir, index) => (
-                                        <Fragment key={fir.icao}>
-                                            {index > 0 && ' · '}
-                                            {/* A FIR's code and name stay on one line when the list wraps. */}
-                                            <span className="whitespace-nowrap">
-                                                <span className="font-mono">{fir.icao}</span>
-                                                {fir.name !== fir.icao && ` ${fir.name}`}
-                                            </span>
-                                        </Fragment>
-                                    ))}
-                                </p>
-                            )}
+                            {/* VATSSA: no "Our airspace" list. With 22 FIRs it runs to several lines. */}
                         </div>
                     </div>
 

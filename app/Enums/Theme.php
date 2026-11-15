@@ -14,11 +14,15 @@ enum Theme: string
     /** The dark greys and steel blue of VATSIM Scandinavia's Control Center. */
     case Vatsca = 'vatsca';
 
+    /** VATSSA's brand: dark teal pages, teal buttons, the teal-to-green glow and Hanken Grotesk. */
+    case Vatssa = 'vatssa';
+
     public function label(): string
     {
         return match ($this) {
             self::Default => 'Default',
             self::Vatsca => 'VATSIM Scandinavia',
+            self::Vatssa => 'VATSSA',
         };
     }
 }

@@ -199,6 +199,58 @@
     --primary-foreground: #ffffff;
 }
 
+/*
+ * VATSSA (brand tokens from ssa-palette/brand.css): dark teal #07262c pages, ivory #f8f3f0 text,
+ * teal #0197b0 buttons with white text, Hanken Grotesk. Links, focus rings and other accents are
+ * a lighter teal (#2bb4cb), since the brand teal is too dark to read as text here. Success is
+ * the brand green #7bd758. The home page carries the brand's teal-to-green glow, and events
+ * without a banner get the teal-to-green gradient.
+ */
+[data-theme="vatssa"] {
+    --font-sans: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+    --background: #07262c;
+    --foreground: #f8f3f0;
+    --card: #0b323a;
+    --card-foreground: #f8f3f0;
+    --popover: #0b323a;
+    --popover-foreground: #f8f3f0;
+    --primary: #2bb4cb;
+    --primary-foreground: #07262c;
+    --primary-icon: #f8f3f0;
+    --secondary: #12404a;
+    --secondary-foreground: #f8f3f0;
+    --muted: #0e3740;
+    --muted-foreground: #a3b6b9;
+    --accent: #12404a;
+    --accent-foreground: #f8f3f0;
+    --destructive: #e57373;
+    --success: #7bd758;
+    --warning: #f5a623;
+    --border: #1c4a53;
+    --input: #1c4a53;
+    --ring: #0197b0;
+    --sidebar: #051e23;
+    --sidebar-foreground: #f8f3f0;
+    --sidebar-primary: #2bb4cb;
+    --sidebar-primary-foreground: #07262c;
+    --sidebar-accent: #12404a;
+    --sidebar-accent-foreground: #f8f3f0;
+    --sidebar-border: #123a42;
+    --sidebar-ring: #0197b0;
+    --navbar: #051e23;
+    --navbar-border: #123a42;
+    --hero:
+        radial-gradient(ellipse at top right, color-mix(in oklch, #0197b0 22%, transparent), transparent 55%),
+        radial-gradient(ellipse at bottom left, color-mix(in oklch, #7bd758 10%, transparent), transparent 50%);
+    --banner: linear-gradient(to bottom right, #0197b0, #7bd758);
+}
+
+/* Filled buttons are the brand teal with white text; the lighter accent teal would be too loud. */
+[data-theme="vatssa"] [data-slot="button"][data-variant="default"] {
+    --primary: #0197b0;
+    --primary-foreground: #ffffff;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

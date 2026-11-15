@@ -78,7 +78,7 @@ class SiteSettingsTest extends TestCase
 
         $this->actingAs($admin)->get('/admin/settings')->assertInertia(fn (Assert $page) => $page
             ->where('settings.theme', 'default')
-            ->where('themes', [['value' => 'default', 'label' => 'Default'], ['value' => 'vatsca', 'label' => 'VATSIM Scandinavia']])
+            ->where('themes', [['value' => 'default', 'label' => 'Default'], ['value' => 'vatsca', 'label' => 'VATSIM Scandinavia'], ['value' => 'vatssa', 'label' => 'VATSSA']])
         );
 
         $this->actingAs($admin)

@@ -15,6 +15,10 @@ export default defineConfig({
                 bunny('Roboto', {
                     weights: [400, 500, 600],
                 }),
+                // VATSSA's brand font, used by the VATSSA theme.
+                bunny('Hanken Grotesk', {
+                    weights: [400, 500, 600, 700],
+                }),
                 // For ICAO codes, callsigns and times, so they look the same on every system.
                 bunny('Roboto Mono', {
                     weights: [400, 500],
