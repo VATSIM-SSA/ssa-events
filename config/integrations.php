@@ -42,4 +42,17 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | VATSSA: One Roster For The Division
+    |--------------------------------------------------------------------------
+    |
+    | On, Control Center's roster sync gives anyone active in any area, or with
+    | a visiting endorsement, one Controller role across the hub, and ignores
+    | the area map. Off keeps upstream's Controller role per mapped FIR.
+    |
+    */
+
+    'control_center_hub_wide' => (bool) env('CONTROL_CENTER_HUB_WIDE', false),
+
 ];

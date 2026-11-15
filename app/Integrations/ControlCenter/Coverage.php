@@ -43,8 +43,11 @@ final readonly class Coverage
         }
 
         $firAreas = array_keys(array_filter($this->areas->firs, fn (string $icao) => $icao === $firIcao));
+        // VATSSA: hub-wide, any area counts for every FIR.
+        $hubWide = RosterSync::hubWide();
+        $covers = fn (array $areas) => $hubWide ? $areas !== [] : array_intersect($areas, $firAreas) !== [];
 
-        if (array_intersect($member->active_areas, $firAreas) !== []) {
+        if ($covers($member->active_areas)) {
             $rating = $this->rating($member->rating);
 
             return $rating !== null && $rating->value < $required->value
@@ -54,7 +57,7 @@ final readonly class Coverage
 
         $visiting = collect($member->endorsements['visiting'] ?? [])
             ->filter(fn (mixed $endorsement) => is_array($endorsement)
-                && array_intersect(array_map(fn (mixed $area) => mb_strtolower((string) $area), (array) ($endorsement['areas'] ?? [])), $firAreas) !== [])
+                && $covers(array_map(fn (mixed $area) => mb_strtolower((string) $area), (array) ($endorsement['areas'] ?? []))))
             ->map(fn (array $endorsement) => $this->rating($endorsement['rating'] ?? null))
             ->filter()
             ->sortByDesc(fn (ControllerRating $rating) => $rating->value)
@@ -66,7 +69,9 @@ final readonly class Coverage
                 : null;
         }
 
-        return "Not active in {$firIcao} in Control Center, and no visiting endorsement for it.";
+        return $hubWide
+            ? 'Not active in Control Center, and no visiting endorsement.'
+            : "Not active in {$firIcao} in Control Center, and no visiting endorsement for it.";
     }
 
     private function hasSolo(Member $member, string $callsign): bool

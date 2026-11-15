@@ -25,7 +25,8 @@ use Illuminate\Support\Str;
 
 /**
  * Hands out the Controller role from Control Center's roster: in the FIR of every area someone
- * is active in, or holds a visiting endorsement for. Never across the hub.
+ * is active in, or holds a visiting endorsement for. Never across the hub, unless hubWide()
+ * (VATSSA) is on.
  *
  * While it's the Controller source, every automatic Controller role is its to give and take
  * away, including hub-wide ones the hub's own rule gave before it took over. Roles given by hand
@@ -67,8 +68,9 @@ class RosterSync extends Feature implements ControllerSource, StaffingNotes, Syn
         $listed = collect($members)
             ->flatMap(fn (array $member) => [...array_keys($member['areas']), ...(new Member(['endorsements' => $member['endorsements']]))->controllingAreas()])
             ->unique();
-        $missing = array_values(array_diff($areas->areas(), $listed->all()));
-        $warnings = $this->warnings($areas, $listed);
+        // VATSSA: hub-wide, the area map plays no part, so there is nothing to miss or warn about.
+        $missing = self::hubWide() ? [] : array_values(array_diff($areas->areas(), $listed->all()));
+        $warnings = self::hubWide() ? [] : $this->warnings($areas, $listed);
 
         // A renamed or vanished area would otherwise take the role from everyone in its FIR.
         if ($missing !== []) {
@@ -159,6 +161,16 @@ class RosterSync extends Feature implements ControllerSource, StaffingNotes, Syn
         Member::query()->delete();
     }
 
+    /**
+     * VATSSA: one roster for the whole division. Anyone active in any Control Center area, or
+     * holding a visiting endorsement, gets one Controller role across the hub, and the area map
+     * is not used. Set by CONTROL_CENTER_HUB_WIDE; off keeps upstream's per-FIR behaviour.
+     */
+    public static function hubWide(): bool
+    {
+        return (bool) config('integrations.control_center_hub_wide', false);
+    }
+
     private function areas(): AreaMap
     {
         return AreaMap::parse(app(Integrations::class)->configuration(app(ControlCenter::class))->get('areas'));
@@ -168,7 +180,7 @@ class RosterSync extends Feature implements ControllerSource, StaffingNotes, Syn
      * The automatic Controller roles to give and take away to match the stored roster, for
      * everyone or one user.
      *
-     * @return array{add: list<array{user: User, fir: Fir}>, remove: Collection<int, RoleAssignment>, existing: int}
+     * @return array{add: list<array{user: User, fir: ?Fir}>, remove: Collection<int, RoleAssignment>, existing: int}
      */
     private function plan(AreaMap $areas, ?User $only = null): array
     {
@@ -180,11 +192,16 @@ class RosterSync extends Feature implements ControllerSource, StaffingNotes, Syn
             ->get()
             ->keyBy('vatsim_cid');
 
-        $wanted = Member::query()->whereIn('cid', $users->keys())->get()->flatMap(fn (Member $member) => collect($member->controllingAreas())
-            ->map(fn (string $area) => $firs->get((string) $areas->fir($area)))
-            ->filter()
-            ->unique('id')
-            ->map(fn (Fir $fir) => ['user' => $users[$member->cid], 'fir' => $fir]));
+        $hubWide = self::hubWide();
+
+        $wanted = Member::query()->whereIn('cid', $users->keys())->get()->flatMap(fn (Member $member) => $hubWide
+            // VATSSA: active in any area, or a visiting endorsement anywhere, is Controller everywhere.
+            ? ($member->controllingAreas() === [] ? [] : [['user' => $users[$member->cid], 'fir' => null]])
+            : collect($member->controllingAreas())
+                ->map(fn (string $area) => $firs->get((string) $areas->fir($area)))
+                ->filter()
+                ->unique('id')
+                ->map(fn (Fir $fir) => ['user' => $users[$member->cid], 'fir' => $fir]));
 
         $automatic = RoleAssignment::query()
             ->where('role_id', $role->id)
@@ -192,19 +209,20 @@ class RosterSync extends Feature implements ControllerSource, StaffingNotes, Syn
             ->when($only, fn ($query) => $query->where('user_id', $only->id))
             ->get();
 
-        $wantedKeys = $wanted->map(fn (array $grant) => "{$grant['user']->id}:{$grant['fir']->id}");
+        $wantedKeys = $wanted->map(fn (array $grant) => "{$grant['user']->id}:{$grant['fir']?->id}");
         $heldKeys = $automatic->map(fn (RoleAssignment $assignment) => "{$assignment->user_id}:{$assignment->fir_id}");
 
         return [
-            'add' => $wanted->reject(fn (array $grant) => $heldKeys->contains("{$grant['user']->id}:{$grant['fir']->id}"))->values()->all(),
-            'remove' => $automatic->reject(fn (RoleAssignment $assignment) => $assignment->fir_id !== null
+            'add' => $wanted->reject(fn (array $grant) => $heldKeys->contains("{$grant['user']->id}:{$grant['fir']?->id}"))->values()->all(),
+            // Hub-wide keeps only hub-wide roles, so any FIR-scoped ones from before are taken away.
+            'remove' => $automatic->reject(fn (RoleAssignment $assignment) => ($assignment->fir_id === null) === $hubWide
                 && $wantedKeys->contains("{$assignment->user_id}:{$assignment->fir_id}"))->values(),
             'existing' => $automatic->count(),
         ];
     }
 
     /**
-     * @param  array{add: list<array{user: User, fir: Fir}>, remove: Collection<int, RoleAssignment>, existing: int}  $plan
+     * @param  array{add: list<array{user: User, fir: ?Fir}>, remove: Collection<int, RoleAssignment>, existing: int}  $plan
      * @return array{0: int, 1: int} How many roles were given and taken away.
      */
     private function apply(array $plan): array
