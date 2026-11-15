@@ -7,6 +7,7 @@ on:
     paths-ignore:
       - "**.md"
       - ".events-upstream-version"
+      - ".github/workflows/webhook-test.yml"
 
 # Nothing runs with more than it is given below.
 permissions: {}
