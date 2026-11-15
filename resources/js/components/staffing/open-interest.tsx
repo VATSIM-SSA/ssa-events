@@ -251,7 +251,7 @@ function InterestForm({ occurrenceId, positions, mine }: { occurrenceId: number;
                 <Textarea value={form.data.notes} maxLength={500} onChange={(event) => form.setData('notes', event.target.value)} />
             </Field>
 
-            <p className="text-xs text-muted-foreground">Only you, Event Staff and vACC Staff can see your interest.</p>
+            <p className="text-xs text-muted-foreground">Only you, Event Staff and Division Staff can see your interest.</p>
 
             <div className="flex flex-wrap gap-2">
                 <Button type="submit" disabled={form.processing}>

@@ -24,9 +24,9 @@ class RoleManagementTest extends TestCase
             ->has('roles', 4)
             ->where('roles.0.name', Roles::ADMINISTRATOR)
             ->where('roles.0.builtIn', true)
-            ->where('roles.2.name', Roles::EVENT_STAFF)
-            ->where('roles.2.users', 1)
-            ->where('roles.2.builtIn', true)
+            ->where('roles.3.name', Roles::EVENT_STAFF)
+            ->where('roles.3.users', 1)
+            ->where('roles.3.builtIn', true)
         );
     }
 
@@ -87,10 +87,10 @@ class RoleManagementTest extends TestCase
 
         $this->actingAs($admin)
             ->put("/admin/roles/{$role->id}", ['name' => 'Board', 'permissions' => []])
-            ->assertSessionHasErrors(['name' => 'vACC Staff is built in, so it can’t be renamed.']);
+            ->assertSessionHasErrors(['name' => 'Division Staff is built in, so it can’t be renamed.']);
         $this->actingAs($admin)
             ->delete("/admin/roles/{$role->id}")
-            ->assertSessionHasErrors(['role' => 'vACC Staff is built in, so it can’t be deleted.']);
+            ->assertSessionHasErrors(['role' => 'Division Staff is built in, so it can’t be deleted.']);
 
         $this->actingAs($admin)
             ->put("/admin/roles/{$role->id}", ['name' => Roles::VACC_STAFF, 'permissions' => [Permission::ViewEvents->value, Permission::ManageStaffing->value]])

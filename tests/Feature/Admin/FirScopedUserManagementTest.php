@@ -130,9 +130,9 @@ class FirScopedUserManagementTest extends TestCase
             ->where('roles', fn ($roles) => collect($roles)->mapWithKeys(fn ($role) => [$role['name'] => $role['grantableIn']])->all() === [
                 Roles::ADMINISTRATOR => [],
                 Roles::CONTROLLER => [],
+                Roles::VACC_STAFF => [],
                 Roles::EVENT_STAFF => [$this->copenhagen->id],
                 'FIR Lead' => [$this->copenhagen->id],
-                Roles::VACC_STAFF => [],
             ])
         );
     }

@@ -17,7 +17,7 @@ const errors: Record<number, ErrorDetails> = {
 
 const fallback: ErrorDetails = {
     title: 'Something went wrong',
-    message: 'The hub ran into a problem. Try again, and if it keeps happening let the vACC staff know.',
+    message: 'The hub ran into a problem. Try again, and if it keeps happening let the division staff know.',
     icon: TriangleAlert,
 };
 

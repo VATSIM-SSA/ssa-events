@@ -59,7 +59,7 @@ class ProfileTest extends TestCase
         $this->actingAs($user)->get('/profile')->assertInertia(fn (Assert $page) => $page
             ->where('details', ['name' => 'Jane Doe', 'cid' => 1000009, 'rating' => 'S2', 'subdivision' => 'SCA'])
             ->where('roleGroups', [
-                ['scope' => 'Across the Hub', 'roles' => [['name' => 'vACC Staff', 'automatic' => false]]],
+                ['scope' => 'Across the Hub', 'roles' => [['name' => 'Division Staff', 'automatic' => false]]],
                 ['scope' => 'EKDK Copenhagen', 'roles' => [['name' => 'Controller', 'automatic' => true], ['name' => 'Event Staff', 'automatic' => false]]],
                 // A FIR named by its ICAO isn't named twice.
                 ['scope' => 'ENOR', 'roles' => [['name' => 'Event Staff', 'automatic' => false]]],

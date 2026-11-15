@@ -22,7 +22,7 @@ final class Roles
 
     public const string EVENT_STAFF = 'Event Staff';
 
-    public const string VACC_STAFF = 'vACC Staff';
+    public const string VACC_STAFF = 'Division Staff';
 
     public const string CONTROLLER = 'Controller';
 

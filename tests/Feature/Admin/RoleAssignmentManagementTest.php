@@ -33,7 +33,7 @@ class RoleAssignmentManagementTest extends TestCase
 
         $this->actingAs($admin)->get("/admin/users/{$user->id}")->assertInertia(fn (Assert $page) => $page
             ->component('Admin/Users/Edit')
-            ->where('user.roles', ['Event Staff · EKDK', 'vACC Staff'])
+            ->where('user.roles', ['Division Staff', 'Event Staff · EKDK'])
             ->has('assignments', 2)
             ->where('assignments.0.role', Roles::VACC_STAFF)
             ->where('assignments.0.fir', null)
@@ -105,8 +105,8 @@ class RoleAssignmentManagementTest extends TestCase
             ->where('roles.0.name', Roles::ADMINISTRATOR)
             ->where('roles.0.grantableIn', [])
             ->where('roles.0.hubOnly', true)
-            ->where('roles.3.name', 'User Manager')
-            ->where('roles.3.grantableIn', [null])
+            ->where('roles.4.name', 'User Manager')
+            ->where('roles.4.grantableIn', [null])
         );
     }
 

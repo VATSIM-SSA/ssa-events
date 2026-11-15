@@ -78,8 +78,8 @@ _Avoid_: Admin, superuser
 The built-in role that plans events and their staffing.
 _Avoid_: Event team, organiser
 
-**vACC Staff**:
-The built-in role for vACC staff outside the events team, who can see every Event and its staffing but not change them.
+**Division Staff** (upstream: vACC Staff):
+The built-in role for division staff outside the events team, who can see every Event and its staffing but not change them.
 _Avoid_: Observer, read-only staff
 
 **Controller**:

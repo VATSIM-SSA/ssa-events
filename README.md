@@ -23,7 +23,7 @@ Times are shown in UTC unless someone picks another time zone in their settings.
 | --- | --- |
 | Administrator | Everything. Always held across the whole hub, and the only role that can change the vACC's settings, FIRs, event types and role definitions, or give someone Administrator. |
 | Event Staff | Create, edit, publish and cancel events, and plan their staffing. |
-| vACC Staff | See every event and its staffing, including Drafts, without changing anything. |
+| Division Staff | See every event and its staffing, including Drafts, without changing anything. |
 | Controller | Book shifts, show Staffing Interest and be put on rosters. |
 | Pilot | Not a role: anyone who has signed in without one. |
 
