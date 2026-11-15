@@ -28,5 +28,7 @@
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="INERTIA_SSR_ENABLED" value="false"/>
+        <!-- VATSSA: upstream's tests run upstream's per-FIR behaviour; tests/Feature/Vatssa* switch it on. -->
+        <env name="VATSSA_HUB_WIDE" value="false"/>
     </php>
 </phpunit>

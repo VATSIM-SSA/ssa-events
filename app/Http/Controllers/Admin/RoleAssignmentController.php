@@ -38,6 +38,12 @@ class RoleAssignmentController extends Controller
 
         $role = Role::query()->findOrFail($validated['role_id']);
         $fir = isset($validated['fir_id']) ? Fir::query()->findOrFail($validated['fir_id']) : null;
+
+        // VATSSA: roles are only ever given across the hub.
+        if ($fir !== null && Roles::hubWideOnly()) {
+            throw ValidationException::withMessages(['roles' => 'Every role applies across the hub, so it can’t be given in one FIR.']);
+        }
+
         $this->ensureGrantable($request, $role, $fir);
 
         if ($fir !== null && Roles::isAdministrator($role)) {
@@ -62,7 +68,7 @@ class RoleAssignmentController extends Controller
 
         if ($assignment->source === AssignmentSource::Automatic) {
             throw ValidationException::withMessages([
-                'roles' => "{$user->name} gets {$assignment->role->name} automatically from their rating and subdivision, so it can’t be removed here.",
+                'roles' => "{$user->name} gets {$assignment->role->name} automatically from Control Center’s roster, so it can’t be removed here.",
             ]);
         }
 

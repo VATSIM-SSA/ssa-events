@@ -24,7 +24,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 /**
- * VATSSA's fork: one roster for the whole division (CONTROL_CENTER_HUB_WIDE). Active in any
+ * VATSSA's fork: one roster for the whole division (config/vatssa.php). Active in any
  * Control Center area, or a visiting endorsement, gives one Controller role across the hub.
  */
 class VatssaHubWideRosterSyncTest extends TestCase
@@ -42,7 +42,7 @@ class VatssaHubWideRosterSyncTest extends TestCase
         config([
             'vacc.subdivision' => null,
             'integrations.settings.control-center' => [],
-            'integrations.control_center_hub_wide' => true,
+            'vatssa.hub_wide' => true,
         ]);
         $this->fasa = Fir::factory()->create(['icao' => 'FASA', 'name' => 'South Africa']);
         $this->htdc = Fir::factory()->create(['icao' => 'HTDC', 'name' => 'Dar es Salaam']);
@@ -190,7 +190,7 @@ class VatssaHubWideRosterSyncTest extends TestCase
 
     public function test_off_keeps_upstreams_per_fir_roles(): void
     {
-        config(['integrations.control_center_hub_wide' => false]);
+        config(['vatssa.hub_wide' => false]);
         $this->switchOn(areas: 'southern = FASA');
         $member = User::factory()->create(['vatsim_cid' => 1000001]);
         $this->fakeControlCenter([$this->member(1000001, active: ['southern'])]);

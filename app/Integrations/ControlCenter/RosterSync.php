@@ -164,11 +164,11 @@ class RosterSync extends Feature implements ControllerSource, StaffingNotes, Syn
     /**
      * VATSSA: one roster for the whole division. Anyone active in any Control Center area, or
      * holding a visiting endorsement, gets one Controller role across the hub, and the area map
-     * is not used. Set by CONTROL_CENTER_HUB_WIDE; off keeps upstream's per-FIR behaviour.
+     * is not used. See config/vatssa.php.
      */
     public static function hubWide(): bool
     {
-        return (bool) config('integrations.control_center_hub_wide', false);
+        return Roles::hubWideOnly();
     }
 
     private function areas(): AreaMap

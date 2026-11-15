@@ -61,6 +61,14 @@ final class Roles
         return array_map(fn (Permission $permission) => $permission->value, Permission::cases());
     }
 
+    /**
+     * VATSSA: every role applies across the hub, never in one FIR. See config/vatssa.php.
+     */
+    public static function hubWideOnly(): bool
+    {
+        return (bool) config('vatssa.hub_wide', false);
+    }
+
     public static function isAdministrator(Role $role): bool
     {
         return $role->name === self::ADMINISTRATOR;
@@ -108,7 +116,7 @@ final class Roles
      */
     public static function grantableIn(User $user, Role $role, Collection $firs): array
     {
-        $places = self::isAdministrator($role) ? [null] : [null, ...$firs->all()];
+        $places = self::isAdministrator($role) || self::hubWideOnly() ? [null] : [null, ...$firs->all()];
 
         return collect($places)
             ->filter(fn (?Fir $fir) => self::canGrant($user, $role, $fir))
