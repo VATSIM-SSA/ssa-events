@@ -1,0 +1,26 @@
+name: Test Discord webhook
+
+# Run by hand from the Actions tab. Run it on staging to test the staging environment's
+# webhook, and on main to test production's (production asks for approval first, as a deploy
+# does). Other branches get no environment, so no secret.
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    if: github.repository == 'VATSIM-SSA/ssa-events' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging')
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+    steps:
+      - name: Post a test message
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -z "$WEBHOOK" ]; then echo "::error::DISCORD_WEBHOOK is not set for $ENVIRONMENT"; exit 1; fi
+          jq -n --arg t "🧪 Events webhook test: $ENVIRONMENT" --arg u "$RUN_URL" \
+            '{username: "SSA Deploy", embeds: [{title: $t, url: $u, color: 3447003, description: "If you can read this, the deploy-failure alerts for this environment reach Discord."}]}' \
+            | curl -sS --fail-with-body -H "Content-Type: application/json" -X POST "$WEBHOOK" -d @-
