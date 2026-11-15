@@ -8,20 +8,29 @@ on:
       - "**.md"
       - ".events-upstream-version"
 
+# Nothing runs with more than it is given below.
+permissions: {}
+
 concurrency:
   group: deploy-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   build-and-deploy:
+    # Only this repo's own main and staging. The environments' deployment-branch rules hold the
+    # deploy keys to the same two branches, so a workflow edited on any other branch gets no key.
+    if: github.repository == 'VATSIM-SSA/ssa-events' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging')
     runs-on: ubuntu-latest
     environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
     permissions:
       contents: read
       packages: write
     steps:
+      # Third-party actions are pinned to a commit, so a moved tag can't reach the deploy key.
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
 
       - name: Resolve target
         id: vars
@@ -33,19 +42,19 @@ jobs:
           fi
 
       - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
 
       # The Dockerfile's last stage is the production image. Never build "playground":
       # it wipes the database and loads sample data on every start.
       - name: Build and push image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: .
           push: true
@@ -56,7 +65,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Deploy over SSH (forced-command key picks the target)
-        uses: appleboy/ssh-action@v1
+        uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5
         with:
           host: ${{ secrets.VPS_HOST }}
           port: ${{ secrets.VPS_PORT }}
@@ -64,15 +73,14 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: ${{ steps.vars.outputs.target }}
 
+      # Values go in through env, never ${{ }} inside the script, so nothing in them runs as shell.
       - name: Notify Discord on failure
         if: failure()
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          TARGET: ${{ steps.vars.outputs.target }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          BRANCH: ${{ github.ref_name }}
+          SHA: ${{ github.sha }}
         run: |
-          curl -sS -H "Content-Type: application/json" -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d '{
-            "username": "SSA Deploy",
-            "embeds": [{
-              "title": "❌ Events deploy failed — ${{ steps.vars.outputs.target }}",
-              "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-              "color": 15158332,
-              "description": "Branch **${{ github.ref_name }}** · commit `${{ github.sha }}`"
-            }]
-          }'
+          jq -n --arg t "❌ Events deploy failed — $TARGET" --arg u "$RUN_URL" --arg d "Branch **$BRANCH** · commit \`$SHA\`"             '{username: "SSA Deploy", embeds: [{title: $t, url: $u, color: 15158332, description: $d}]}'             | curl -sS -H "Content-Type: application/json" -X POST "$WEBHOOK" -d @-
