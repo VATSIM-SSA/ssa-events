@@ -39,7 +39,7 @@ export default function FirsIndex({ firs }: { firs: FirSummary[] }) {
 
             <AdminHeader
                 title="FIRs"
-                description="The FIRs your vACC covers. Every event belongs to one of them."
+                description="The FIRs your division covers. Every event belongs to one of them."
                 action={
                     <Button className="self-start" asChild>
                         <Link href="/admin/firs/create">

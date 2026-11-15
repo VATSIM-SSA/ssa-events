@@ -68,13 +68,16 @@ export default function SiteSettings({ settings, locked, themes, controllerSourc
         <>
             <Head title="Settings · Admin" />
 
-            <AdminHeader title="Settings" description="Who this Event Hub belongs to: the vACC’s details, logo and colors, shown across the site." />
+            <AdminHeader
+                title="Settings"
+                description="Who this Event Hub belongs to: the division’s details, logo and colors, shown across the site."
+            />
 
             {/* Narrower than the header, but on its left edge, so the page has one left line. */}
             <form onSubmit={submit} className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8 sm:px-6 [&>*]:max-w-3xl">
                 <Card>
                     <CardHeader>
-                        <CardTitle>vACC</CardTitle>
+                        <CardTitle>Division</CardTitle>
                         <CardDescription>
                             Details set on the server can’t be changed here. Keys and secrets for VATSIM and other services are never shown in the
                             app.
@@ -113,7 +116,7 @@ export default function SiteSettings({ settings, locked, themes, controllerSourc
                                 placeholder="SCA"
                                 className="font-mono"
                             />
-                            {hint('subdivision', 'The code VATSIM uses for your vACC.')}
+                            {hint('subdivision', 'The code VATSIM uses for your subdivision. Leave empty for a whole division.')}
                         </Field>
                         <Field label="Website" error={errors.website}>
                             <Input

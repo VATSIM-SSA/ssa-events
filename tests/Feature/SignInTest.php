@@ -25,7 +25,7 @@ class SignInTest extends TestCase
     {
         return [
             'VATSIM Connect' => ['vatsim', 'VATSIM'],
-            'Handover' => ['handover', 'VATSIM Scandinavia'],
+            'Handover' => ['handover', 'VATSSA'],
         ];
     }
 

@@ -135,7 +135,15 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
                 <footer className="border-t">
                     <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-8 text-sm text-muted-foreground sm:px-6 lg:flex-row lg:items-center lg:justify-between">
-                        <p>{vacc.name} Event Hub · Part of the VATSIM network</p>
+                        <p>
+                            {vacc.name} Event Hub · Part of the VATSIM network · {/* VATSSA: the division's privacy policy covers the hub. */}
+                            <a
+                                href="https://vats.im/ssa/privacy"
+                                className="underline-offset-4 transition-colors hover:text-foreground hover:underline"
+                            >
+                                Privacy policy
+                            </a>
+                        </p>
                         <p>For flight simulation use only. Not for real-world navigation.</p>
                     </div>
                 </footer>

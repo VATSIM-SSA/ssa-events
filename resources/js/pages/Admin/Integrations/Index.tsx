@@ -28,7 +28,7 @@ export default function IntegrationsIndex({ integrations }: { integrations: Inte
 
             <AdminHeader
                 title="Integrations"
-                description="Connect the Event Hub to your vACC’s other systems. Everything works without them; switch on only what you use."
+                description="Connect the Event Hub to your division’s other systems. Everything works without them; switch on only what you use."
             />
 
             <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 sm:px-6">

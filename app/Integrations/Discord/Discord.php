@@ -38,7 +38,7 @@ class Discord extends Integration
 
     public function description(): string
     {
-        return 'Your vACC’s Discord server: published events are announced in its events channel, and each event’s roster is kept up to date in its own channel.';
+        return 'Your division’s Discord server: published events are announced in its events channel, and each event’s roster is kept up to date in its own channel.';
     }
 
     public function settings(): array

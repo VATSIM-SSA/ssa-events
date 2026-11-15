@@ -73,7 +73,7 @@ class SiteSettingsRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'Enter the vACC’s name.',
+            'name.required' => 'Enter the division’s name.',
             'website.url' => 'Enter a full link starting with https://.',
             'subdivision.regex' => 'Use the subdivision’s code from VATSIM, like SCA.',
             'logo.mimes' => 'Upload a PNG, JPG, WebP or SVG file.',

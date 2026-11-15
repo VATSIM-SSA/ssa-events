@@ -143,7 +143,7 @@ export default function EditUser({ user, assignments, roles, firs }: EditUserPro
                                                 <span className="text-sm text-muted-foreground">across the hub</span>
                                             )}
                                             {assignment.automatic && (
-                                                <Badge variant="secondary" title="Given and taken away automatically, by rating and subdivision.">
+                                                <Badge variant="secondary" title="Given and taken away automatically, from Control Center’s roster.">
                                                     Given automatically
                                                 </Badge>
                                             )}

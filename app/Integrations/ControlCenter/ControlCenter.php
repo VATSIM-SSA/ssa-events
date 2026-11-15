@@ -26,7 +26,7 @@ class ControlCenter extends Integration
 
     public function description(): string
     {
-        return 'Your vACC’s training system: who is an active controller and where, and the positions they control.';
+        return 'Your division’s training system: who is an active controller and where, and the positions they control.';
     }
 
     public function settings(): array

@@ -25,7 +25,7 @@ enum SignInProvider: string
     {
         return match ($this) {
             self::Vatsim => 'VATSIM',
-            self::Handover => 'VATSIM Scandinavia',
+            self::Handover => 'VATSSA',
         };
     }
 }

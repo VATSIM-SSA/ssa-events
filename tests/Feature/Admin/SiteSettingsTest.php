@@ -138,7 +138,7 @@ class SiteSettingsTest extends TestCase
     public static function invalidDetails(): array
     {
         return [
-            'no name' => [['name' => ''], 'name', 'Enter the vACC’s name.'],
+            'no name' => [['name' => ''], 'name', 'Enter the division’s name.'],
             'a subdivision that is not a code' => [['subdivision' => 'Scandinavia 1'], 'subdivision', 'Use the subdivision’s code from VATSIM, like SCA.'],
             'automatic Controller without a subdivision' => [['auto_controller' => true, 'subdivision' => ''], 'auto_controller', 'Set the subdivision first.'],
             'a website without https' => [['website' => 'http://example.org'], 'website', 'Enter a full link starting with https://.'],
