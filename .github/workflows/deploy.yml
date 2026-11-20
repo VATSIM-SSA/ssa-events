@@ -8,6 +8,9 @@ on:
       - "**.md"
       - ".events-upstream-version"
       - ".github/workflows/webhook-test.yml"
+  # Redeploy without a code change. The job's ref check and the environments' branch rules
+  # still limit it to main and staging, and production still waits for approval.
+  workflow_dispatch:
 
 # Nothing runs with more than it is given below.
 permissions: {}
