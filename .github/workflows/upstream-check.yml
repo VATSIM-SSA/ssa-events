@@ -21,14 +21,23 @@ jobs:
           persist-credentials: false
 
       - name: Compare upstream newest tag to our pin
+        env:
+          # Repo-level secret: DISCORD_WEBHOOK lives only in the staging/production
+          # environments, which this job (scheduled on main, no environment) cannot read.
+          WEBHOOK: ${{ secrets.UPSTREAM_WEBHOOK }}
         run: |
+          if [ -z "$WEBHOOK" ]; then
+            echo "::error::UPSTREAM_WEBHOOK secret is not set; the alert cannot post."
+            exit 1
+          fi
           UPSTREAM=$(git ls-remote --tags --refs https://github.com/Vatsim-Scandinavia/events.git 'v*' \
             | sed 's#.*refs/tags/##' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+(-rc\.[0-9]+)?$' \
             | sed '/-/!s/$/_/' | sort -V | sed 's/_$//' | tail -1)
           OURS=$(tr -d '[:space:]' < .events-upstream-version 2>/dev/null)
           echo "upstream=$UPSTREAM  ours=$OURS"
+          if [ -z "$UPSTREAM" ]; then echo "::error::Could not read upstream tags."; exit 1; fi
           if [ -n "$UPSTREAM" ] && [ "$UPSTREAM" != "$OURS" ]; then
-            curl -sS -H "Content-Type: application/json" -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d "{
+            curl -sS --fail-with-body -H "Content-Type: application/json" -X POST "$WEBHOOK" -d "{
               \"username\": \"Events Upstream\",
               \"embeds\": [{
                 \"title\": \"⬆️ Upstream Events ${UPSTREAM} tagged\",
