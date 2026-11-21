@@ -43,7 +43,11 @@ class ControlCenter extends Integration
                         $fail($problem);
                     }
                 }],
-                description: 'Which FIR each Control Center area is, one per line, like “denmark = EKDK”. Controllers active in an area get the Controller role in its FIR.',
+                // VATSSA: hub-wide, the roster sync ignores the area map, so it isn't needed.
+                required: ! RosterSync::hubWide(),
+                description: RosterSync::hubWide()
+                    ? 'Not needed: active in any Control Center area gives the Controller role across the whole hub. Leave empty.'
+                    : 'Which FIR each Control Center area is, one per line, like “denmark = EKDK”. Controllers active in an area get the Controller role in its FIR.',
                 multiline: true,
             ),
         ];
