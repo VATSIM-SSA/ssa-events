@@ -200,6 +200,33 @@ class VatssaHubWideRosterSyncTest extends TestCase
         $this->assertSame([$this->fasa->id], $this->automaticFirs($member));
     }
 
+    public function test_control_center_switches_on_without_an_area_map(): void
+    {
+        Http::fake(['cc.example/api/v1/users*' => Http::response(['data' => []])]);
+
+        $this->actingAs(User::factory()->admin()->create())->put('/admin/integrations/control-center', [
+            'enabled' => true,
+            'features' => ['roster'],
+            'removal_limit' => 25,
+            'settings' => ['url' => 'https://cc.example', 'token' => 'cc-key', 'areas' => ''],
+        ])->assertSessionHasNoErrors();
+
+        $this->assertTrue(IntegrationSetting::query()->findOrFail('control-center')->enabled);
+    }
+
+    public function test_per_fir_mode_still_needs_the_area_map(): void
+    {
+        config(['vatssa.hub_wide' => false]);
+        Http::fake(['cc.example/api/v1/users*' => Http::response(['data' => []])]);
+
+        $this->actingAs(User::factory()->admin()->create())->put('/admin/integrations/control-center', [
+            'enabled' => true,
+            'features' => ['roster'],
+            'removal_limit' => 25,
+            'settings' => ['url' => 'https://cc.example', 'token' => 'cc-key', 'areas' => ''],
+        ])->assertSessionHasErrors('settings.areas');
+    }
+
     private function switchOn(string $areas = '', int $removalLimit = 25): void
     {
         IntegrationSetting::query()->updateOrCreate(['key' => 'control-center'], [
